@@ -9,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -65,9 +64,9 @@ public class UserServices implements UserDetailsService {
         return ResponseEntity.ok().build();
     }
 
-    //    public ResponseEntity<?> refreshToken(User user) {
-//        UserDetails userDetails = loadUserByUsername(user.getEmail());
-//        return ResponseEntity.ok(jwtServices.generateToken(userDetails));
-//    }
-//
+        public ResponseEntity<?> refreshToken(User user) {
+        UserDetails userDetails = loadUserByUsername(user.getEmail());
+        return ResponseEntity.ok(jwtServices.generateToken(userDetails));
+    }
+
 }
