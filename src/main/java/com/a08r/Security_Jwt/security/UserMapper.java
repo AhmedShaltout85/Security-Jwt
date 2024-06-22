@@ -1,10 +1,12 @@
 package com.a08r.Security_Jwt.security;
 
-import lombok.AllArgsConstructor;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
-@AllArgsConstructor
+@Component
+@RequiredArgsConstructor
 public class UserMapper {
     private final PasswordEncoder passwordEncoder;
     public UserDTO getUserDTO(User user) {

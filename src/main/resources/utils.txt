@@ -1,0 +1,40 @@
+# Start postgres container db
+
+docker run -d \
+	--name spring-security-postgres \
+	-p 5432:5432 \
+	-e POSTGRES_PASSWORD=password \
+    -e POSTGRES_DB=jwt_security \
+	-e PGDATA=/var/lib/postgresql/data/pgdata \
+	-v /custom/mount:/var/lib/postgresql/data \
+	postgres
+
+# check postgres container status
+sudo ss -lptn 'sport = :5432'
+sudo kill -9 PID
+# check postgres container logs
+docker logs spring-security-postgres
+
+
+# Connect to postgres with sudo and psql
+
+ahmedshaltout@desktop:~$ sudo -u postgres psql
+psql (10.23 (Ubuntu 10.23-0ubuntu0.18.04.2))
+Type "help" for help.
+
+postgres=# CREATE DATABASE jwt_security;
+CREATE DATABASE
+postgres=# \q
+
+
+\l # list all databases
+\c jwt_security # connect to database
+\d # list all tables
+\dt # list all tables
+\d+ table_name # describe table
+
+==============
+GET
+http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/v3/api-docs
+http://localhost:8080/api/v1/free-access

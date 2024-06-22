@@ -2,6 +2,7 @@ package com.a08r.Security_Jwt.security;
 
 import com.a08r.Security_Jwt.jwt.JwtServices;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,20 +15,23 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
-public class UserServices implements UserDetailsService {
+@RequiredArgsConstructor
+public class UserServices
+//        implements UserDetailsService
+{
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final AuthenticationManager authenticationManager;
     private final JwtServices jwtServices;
+    private final UserDetailsService userDetailsService;
 
 
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        return userRepository.findByEmail(username)
+//                .orElseThrow(() -> new UsernameNotFoundException(username));
+//    }
 
     public ResponseEntity<?> register(User user) {
         User newUser = userRepository.save(user);
@@ -39,7 +43,7 @@ public class UserServices implements UserDetailsService {
                 new UsernamePasswordAuthenticationToken
                         (user.getUsername(), user.getPassword()));
         if (authenticate.isAuthenticated()) {
-            UserDetails userDetails = loadUserByUsername(user.getUsername());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
             return ResponseEntity.ok(jwtServices.generateToken(userDetails));
         }
         return ResponseEntity.badRequest().build();
@@ -65,7 +69,7 @@ public class UserServices implements UserDetailsService {
     }
 
         public ResponseEntity<?> refreshToken(User user) {
-        UserDetails userDetails = loadUserByUsername(user.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
         return ResponseEntity.ok(jwtServices.generateToken(userDetails));
     }
 
