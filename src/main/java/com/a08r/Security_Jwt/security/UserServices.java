@@ -3,6 +3,7 @@ package com.a08r.Security_Jwt.security;
 import com.a08r.Security_Jwt.jwt.JwtServices;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,7 +36,7 @@ public class UserServices
 
     public ResponseEntity<?> register(User user) {
         User newUser = userRepository.save(user);
-        return ResponseEntity.ok(userMapper.getUserDTO(newUser));
+        return new ResponseEntity<>(userMapper.getUserDTO(newUser), HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> login(AuthRequest user) {

@@ -38,3 +38,27 @@ GET
 http://localhost:8080/swagger-ui/index.html
 http://localhost:8080/v3/api-docs
 http://localhost:8080/api/v1/free-access
+
+
+POST http://localhost:8080/api/v1/auth/register
+
+  {
+   "firstname":"linda",
+   "lastname":"linda",
+   "email":"linda@mail.com",
+   "password": "password",
+   "role":"ADMIN"
+   }
+
+
+POST http://localhost:8080/api/v1/auth/login
+
+error: Encoded password does not look like BCrypt
+
+I was also facing same issue:
+
+In my case table's column length was 50 char only which was causing this issue later I modify column length to 100 as suggested in above and it worked for me.
+
+ALTER TABLE `users`
+    CHANGE COLUMN `password` `password` VARCHAR(100) NOT NULL AFTER `enabled`;
+
