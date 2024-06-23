@@ -26,16 +26,13 @@ public class UserServices
     private final JwtServices jwtServices;
     private final UserDetailsService userDetailsService;
 
-
-
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        return userRepository.findByEmail(username)
-//                .orElseThrow(() -> new UsernameNotFoundException(username));
-//    }
-
-    public ResponseEntity<?> register(User user) {
+    public ResponseEntity<?> register(User user) throws Exception{
         User newUser = userRepository.save(user);
+    //TODO: check if email is unique
+        if (newUser.getEmail().isEmpty()) {
+           // throw new Exception("Email cannot be empty");
+            return ResponseEntity.badRequest().body("Email cannot be empty");
+        }
         return new ResponseEntity<>(userMapper.getUserDTO(newUser), HttpStatus.CREATED);
     }
 
@@ -45,7 +42,7 @@ public class UserServices
                         (user.getUsername(), user.getPassword()));
         if (authenticate.isAuthenticated()) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-            return ResponseEntity.ok(jwtServices.generateToken(userDetails));
+            return new ResponseEntity<>(jwtServices.generateToken(userDetails), HttpStatus.OK);
         }
         return ResponseEntity.badRequest().build();
     }
@@ -69,7 +66,8 @@ public class UserServices
         return ResponseEntity.ok().build();
     }
 
-        public ResponseEntity<?> refreshToken(User user) {
+        public ResponseEntity<?> refreshToken(String userEmail) {
+        User user = userRepository.findByEmail(userEmail).get();
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
         return ResponseEntity.ok(jwtServices.generateToken(userDetails));
     }

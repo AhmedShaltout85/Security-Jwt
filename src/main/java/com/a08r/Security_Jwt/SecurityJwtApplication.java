@@ -6,10 +6,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import static com.a08r.Security_Jwt.security.Role.ADMIN;
-import static com.a08r.Security_Jwt.security.Role.MANAGER;
-
 import  com.a08r.Security_Jwt.security.User;
+
+import static com.a08r.Security_Jwt.security.Role.*;
 
 
 @SpringBootApplication
@@ -27,7 +26,7 @@ public class SecurityJwtApplication {
 					.firstname("Admin")
 					.lastname("Admin")
 					.email("admin@mail.com")
-					.password("password123")
+					.password("$2a$10$7bZvwJGVevdQZvVzN/XKueR9Va6k3KMaxZuk7sYvURohtW.R5X3vq")
 					.role(ADMIN)
 					.build();
 			System.out.println("Admin token: " + service.register(admin));
@@ -36,10 +35,19 @@ public class SecurityJwtApplication {
 					.firstname("Manager")
 					.lastname("Manager")
 					.email("manager@mail.com")
-					.password("password123")
+					.password("$2a$10$7bZvwJGVevdQZvVzN/XKueR9Va6k3KMaxZuk7sYvURohtW.R5X3vq")
 					.role(MANAGER)
 					.build();
 			System.out.println("Manager token: " + service.register(manager));
+
+			var user = User.builder()
+					.firstname("User")
+					.lastname("user")
+					.email("user@mail.com")
+					.password("$2a$10$7bZvwJGVevdQZvVzN/XKueR9Va6k3KMaxZuk7sYvURohtW.R5X3vq")
+					.role(USER)
+					.build();
+			System.out.println("Manager token: " + service.register(user));
 
 		};
 	}

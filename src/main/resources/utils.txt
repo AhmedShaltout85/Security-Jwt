@@ -62,3 +62,7 @@ In my case table's column length was 50 char only which was causing this issue l
 ALTER TABLE `users`
     CHANGE COLUMN `password` `password` VARCHAR(100) NOT NULL AFTER `enabled`;
 
+This issue is related to column size. As I am using PostgreSQL, it might be of type issue.
+
+Spring Security : Encoded password does not look like BCrypt
+Alter the password column type from char to varchar, it solves my problem
