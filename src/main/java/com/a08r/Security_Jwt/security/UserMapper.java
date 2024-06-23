@@ -15,7 +15,8 @@ public class UserMapper {
         newUser.setLastname(user.getLastname());
         newUser.setEmail(user.getEmail());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        newUser.setRole(Role.valueOf(user.getRole().toString().toUpperCase()));
+        newUser.setRole(user.getRole());
+//        newUser.setRole(Role.valueOf(user.getRole().toString().toUpperCase()));
         return newUser;
     }
 }
