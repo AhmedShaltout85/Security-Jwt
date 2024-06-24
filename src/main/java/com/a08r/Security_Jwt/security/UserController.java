@@ -23,14 +23,14 @@ public class UserController {
     }
 
 
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody String userEmail) {
-        return new ResponseEntity<>(userServices.refreshToken(userEmail), HttpStatus.OK);
-    }
-
     @GetMapping("/users")
     public ResponseEntity<?> loadAllUsers() {
         return new ResponseEntity<>(userServices.loadAllUsers(), HttpStatus.OK);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody String userEmail) {
+        return new ResponseEntity<>(userServices.refreshToken(userEmail), HttpStatus.OK);
     }
 
 }

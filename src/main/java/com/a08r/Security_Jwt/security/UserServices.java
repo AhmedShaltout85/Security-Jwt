@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,14 +27,19 @@ public class UserServices
     private final JwtServices jwtServices;
     private final UserDetailsService userDetailsService;
 
-    public ResponseEntity<?> register(User user) throws Exception{
+    public ResponseEntity<?> register(User user) throws Exception {
         User newUser = userRepository.save(user);
-    //TODO: check if email is unique
-        if (newUser.getEmail().isEmpty()) {
-           // throw new Exception("Email cannot be empty");
+        //TODO: check if email is unique
+        if (newUser.getEmail() == null ||
+                newUser.getEmail().isEmpty() ||
+                newUser.getEmail().isBlank()) {
+            // throw new Exception("Email cannot be empty");
             return ResponseEntity.badRequest().body("Email cannot be empty");
         }
-        return new ResponseEntity<>(userMapper.getUserDTO(newUser), HttpStatus.CREATED);
+//        return new ResponseEntity<>(userMapper.getUserDTO(newUser), HttpStatus.CREATED);
+UserDTO userDTO = userMapper.getUserDTO(newUser);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userDTO.getEmail());
+        return new ResponseEntity<>(jwtServices.generateToken(userDetails), HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> login(AuthRequest user) {
@@ -66,10 +72,14 @@ public class UserServices
         return ResponseEntity.ok().build();
     }
 
+    //TODO: add refresh token:not implemented correctly
         public ResponseEntity<?> refreshToken(String userEmail) {
-        User user = userRepository.findByEmail(userEmail).get();
+        if(userEmail == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException(userEmail));
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
-        return ResponseEntity.ok(jwtServices.generateToken(userDetails));
+        return ResponseEntity.ok(jwtServices.generateRefreshToken(userDetails));
     }
 
 }

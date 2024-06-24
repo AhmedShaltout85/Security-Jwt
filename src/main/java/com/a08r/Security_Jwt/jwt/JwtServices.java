@@ -58,7 +58,7 @@ public class JwtServices {
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiration))
-                .claim("authorities", authorities)
+//                .claim("authorities", authorities)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

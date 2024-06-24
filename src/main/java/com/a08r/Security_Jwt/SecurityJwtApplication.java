@@ -26,7 +26,7 @@ public class SecurityJwtApplication {
 					.firstname("Admin")
 					.lastname("Admin")
 					.email("admin@mail.com")
-					.password("$2a$10$7bZvwJGVevdQZvVzN/XKueR9Va6k3KMaxZuk7sYvURohtW.R5X3vq")
+					.password("password")
 					.role(ADMIN)
 					.build();
 			System.out.println("Admin token: " + service.register(admin));
@@ -35,7 +35,7 @@ public class SecurityJwtApplication {
 					.firstname("Manager")
 					.lastname("Manager")
 					.email("manager@mail.com")
-					.password("$2a$10$7bZvwJGVevdQZvVzN/XKueR9Va6k3KMaxZuk7sYvURohtW.R5X3vq")
+					.password("password")
 					.role(MANAGER)
 					.build();
 			System.out.println("Manager token: " + service.register(manager));
@@ -44,10 +44,10 @@ public class SecurityJwtApplication {
 					.firstname("User")
 					.lastname("user")
 					.email("user@mail.com")
-					.password("$2a$10$7bZvwJGVevdQZvVzN/XKueR9Va6k3KMaxZuk7sYvURohtW.R5X3vq")
+					.password("password")
 					.role(USER)
 					.build();
-			System.out.println("Manager token: " + service.register(user));
+			System.out.println("User token: " + service.register(user));
 
 		};
 	}

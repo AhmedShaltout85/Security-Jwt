@@ -53,7 +53,7 @@ public class SecurityConfiguration {
                                 .permitAll()
                                 //filter access control for admin
                                 .requestMatchers("/api/v1/management/**").hasRole(ADMIN.name())
-                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
+                                .requestMatchers(GET, "/api/v1/management/**").hasAuthority(ADMIN_READ.name())
                                 .requestMatchers(POST, "/api/v1/management/**").hasAuthority(ADMIN_CREATE.name())
                                 .requestMatchers(PUT, "/api/v1/management/**").hasAuthority(ADMIN_UPDATE.name())
                                 .requestMatchers(DELETE, "/api/v1/management/**").hasAuthority(ADMIN_DELETE.name())
