@@ -24,7 +24,10 @@ public class UserServices {
     private final UserDetailsService userDetailsService;
 
 
-    public ResponseEntity<AuthResponse> register(User user) throws Exception {
+    public ResponseEntity<?> register(User user){
+        if(iUserRepository.findByEmail(user.getEmail()).isPresent()) {
+            return new ResponseEntity<>("Email Already Exists", HttpStatus.BAD_REQUEST);
+        }
         User newUser = iUserRepository.save(user);
         UserDTO userDTO = userMapper.getUserDTO(newUser);
         UserDetails userDetails = userDetailsService.loadUserByUsername(userDTO.getEmail());
