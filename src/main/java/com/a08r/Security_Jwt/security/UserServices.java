@@ -43,7 +43,7 @@ public class UserServices {
         String token = jwtServices.generateToken(userDetails);
         String refreshToken = jwtServices.generateRefreshToken(userDetails);
         AuthResponse authResponse = new AuthResponse();
-        authResponse.setToken(token);
+        authResponse.setAccessToken(token);
         authResponse.setRefreshToken(refreshToken);
         //
         saveUserToken(newUser, token);
@@ -59,7 +59,7 @@ public class UserServices {
         if (authenticate.isAuthenticated()) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
             AuthResponse authResponse = new AuthResponse();
-            authResponse.setToken(jwtServices.generateToken(userDetails));
+            authResponse.setAccessToken(jwtServices.generateToken(userDetails));
             authResponse.setRefreshToken(jwtServices.generateRefreshToken(userDetails));
             //
             revokeAllUserTokens(iUserRepository.findByEmail(user.getUsername()).get());
@@ -109,7 +109,7 @@ public class UserServices {
                 revokeAllUserTokens(user); // revoke all previous tokens PRIVATE METHOD
                 saveUserToken(user, accessToken); // save new token PRIVATE METHOD
                 var authResponse = new AuthResponse();
-                authResponse.setToken(accessToken);
+                authResponse.setAccessToken(accessToken);
                 authResponse.setRefreshToken(refreshToken);
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
