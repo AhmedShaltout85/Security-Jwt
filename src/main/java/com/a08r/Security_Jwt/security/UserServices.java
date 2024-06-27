@@ -40,13 +40,17 @@ public class UserServices {
         User newUser = iUserRepository.save(user);
         UserDTO userDTO = userMapper.getUserDTO(newUser);
         UserDetails userDetails = userDetailsService.loadUserByUsername(userDTO.getEmail());
-        String token = jwtServices.generateToken(userDetails);
+        String accessToken = jwtServices.generateToken(userDetails);
         String refreshToken = jwtServices.generateRefreshToken(userDetails);
+//        var authResponse = AuthResponse.builder()
+//                .accessToken(accessToken)
+//                 .refreshToken(refreshToken)
+//                 .build();
         AuthResponse authResponse = new AuthResponse();
-        authResponse.setAccessToken(token);
+        authResponse.setAccessToken(accessToken);
         authResponse.setRefreshToken(refreshToken);
         //
-        saveUserToken(newUser, token);
+        saveUserToken(newUser, accessToken);
         //
         return new ResponseEntity<>(authResponse, HttpStatus.CREATED);
     }

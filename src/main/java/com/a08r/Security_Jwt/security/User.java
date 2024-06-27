@@ -1,6 +1,7 @@
 package com.a08r.Security_Jwt.security;
 
 import com.a08r.Security_Jwt.token.Token;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Collection;

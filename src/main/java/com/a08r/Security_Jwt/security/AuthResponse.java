@@ -1,14 +1,17 @@
 package com.a08r.Security_Jwt.security;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 
 public class AuthResponse {
-    @JsonIgnoreProperties("access-token")
+    @JsonProperty("access-token")
     private String accessToken;
 
-    @JsonIgnoreProperties("refresh-token")
+    @JsonProperty("refresh-token")
     private String refreshToken;
 }

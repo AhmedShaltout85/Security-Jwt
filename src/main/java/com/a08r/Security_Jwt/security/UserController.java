@@ -27,10 +27,10 @@ public class UserController {
     }
 
 
-//    @GetMapping("/users")
-//    public ResponseEntity<List<User>> loadAllUsers() {
-//        return new ResponseEntity<>((userServices.loadAllUsers().getBody()), HttpStatus.OK);
-//    }
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> loadAllUsers() {
+        return new ResponseEntity<>((userServices.loadAllUsers().getBody()), HttpStatus.OK);
+    }
 
     @PostMapping("/refresh-token")
     public void refreshToken(
