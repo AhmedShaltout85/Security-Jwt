@@ -66,3 +66,10 @@ This issue is related to column size. As I am using PostgreSQL, it might be of t
 
 Spring Security : Encoded password does not look like BCrypt
 Alter the password column type from char to varchar, it solves my problem
+
+to solve this error :
+   @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+//               new BCryptPasswordEncoder();
+    }

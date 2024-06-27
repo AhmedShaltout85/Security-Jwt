@@ -1,8 +1,11 @@
 package com.a08r.Security_Jwt.security;
 
+import com.a08r.Security_Jwt.token.Token;
 import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +33,9 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
 
 
     @Override

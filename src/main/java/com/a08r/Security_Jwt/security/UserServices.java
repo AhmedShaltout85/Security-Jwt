@@ -1,7 +1,14 @@
 package com.a08r.Security_Jwt.security;
 
 import com.a08r.Security_Jwt.jwt.JwtServices;
+import com.a08r.Security_Jwt.token.Token;
+import com.a08r.Security_Jwt.token.TokenRepository;
+import com.a08r.Security_Jwt.token.TokenType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -22,10 +30,11 @@ public class UserServices {
     private final AuthenticationManager authenticationManager;
     private final JwtServices jwtServices;
     private final UserDetailsService userDetailsService;
+    private final TokenRepository tokenRepository;
 
 
-    public ResponseEntity<?> register(User user){
-        if(iUserRepository.findByEmail(user.getEmail()).isPresent()) {
+    public ResponseEntity<?> register(User user) {
+        if (iUserRepository.findByEmail(user.getEmail()).isPresent()) {
             return new ResponseEntity<>("Email Already Exists", HttpStatus.BAD_REQUEST);
         }
         User newUser = iUserRepository.save(user);
@@ -36,6 +45,9 @@ public class UserServices {
         AuthResponse authResponse = new AuthResponse();
         authResponse.setToken(token);
         authResponse.setRefreshToken(refreshToken);
+        //
+        saveUserToken(newUser, token);
+        //
         return new ResponseEntity<>(authResponse, HttpStatus.CREATED);
     }
 
@@ -49,6 +61,10 @@ public class UserServices {
             AuthResponse authResponse = new AuthResponse();
             authResponse.setToken(jwtServices.generateToken(userDetails));
             authResponse.setRefreshToken(jwtServices.generateRefreshToken(userDetails));
+            //
+            revokeAllUserTokens(iUserRepository.findByEmail(user.getUsername()).get());
+            saveUserToken(iUserRepository.findByEmail(user.getUsername()).get(), jwtServices.generateRefreshToken(userDetails));
+            //
             return new ResponseEntity<>(authResponse, HttpStatus.OK);
         }
 
@@ -76,5 +92,51 @@ public class UserServices {
     }
 
 
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String userEmail;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return;
+        }
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtServices.extractUsername(refreshToken);
+        if (userEmail != null) {
+            var user = this.iUserRepository.findByEmail(userEmail)
+                    .orElseThrow();
+            if (jwtServices.isTokenValid(refreshToken, user)) {
+                var accessToken = jwtServices.generateToken(user);
+                revokeAllUserTokens(user); // revoke all previous tokens PRIVATE METHOD
+                saveUserToken(user, accessToken); // save new token PRIVATE METHOD
+                var authResponse = new AuthResponse();
+                authResponse.setToken(accessToken);
+                authResponse.setRefreshToken(refreshToken);
+                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
+        }
+    }
 
+    // PRIVATE METHODS Refactored for reusability in UserServices
+    private void saveUserToken(User user, String jwtToken) {
+        var token = Token.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+        tokenRepository.save(token);
+    }
+
+    private void revokeAllUserTokens(User user) {
+        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+        if (validUserTokens.isEmpty())
+            return;
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        tokenRepository.saveAll(validUserTokens);
+    }
 }
+
