@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -38,6 +39,14 @@ public class UserController {
             HttpServletResponse response
     ) throws IOException {
         userServices.refreshToken(request, response);
+    }
+
+    @PatchMapping
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequest request,
+            Principal connectedUser) {
+        userServices.changePassword(request, connectedUser);
+        return ResponseEntity.ok().build();
     }
 
 }
